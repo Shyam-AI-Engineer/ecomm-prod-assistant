@@ -41,7 +41,16 @@ class DataIngestion:
         self.db_keyspace = os.getenv("ASTRA_DB_KEYSPACE")
     
     def _get_csv_path(self):
-        pass
+        """
+        Get path to the CSV file located inside 'data' folder.
+        """
+        current_dir = os.getcwd()
+        csv_path = os.path.join(current_dir,'data', 'product_reviews.csv')
+
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"CSV file not found at: {csv_path}")
+
+        return csv_path
     
     def _load_csv(self):
          pass
