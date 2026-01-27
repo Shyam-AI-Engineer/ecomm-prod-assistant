@@ -3,7 +3,8 @@ packages = [
     "langchain",
     "langchain_core",
     "python-dotenv",
-    "streamlit"
+    "streamlit",
+    "langchain-astradb"
     ]
 for pkg in packages:
     try:
