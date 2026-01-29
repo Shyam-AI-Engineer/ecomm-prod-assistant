@@ -11,3 +11,12 @@ from evaluation.ragas_eval import evaluate_context_precision, evaluate_response_
 # sys.path.insert(0, str(project_root))
 
 
+class Retriever:
+    def __init__(self):
+        """_summary_
+        """
+        self.model_loader=ModelLoader()
+        self.config=load_config()
+        self._load_env_variables()
+        self.vstore = None
+        self.retriever_instance = None
