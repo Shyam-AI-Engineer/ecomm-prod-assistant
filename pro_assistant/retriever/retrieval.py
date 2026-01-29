@@ -20,3 +20,20 @@ class Retriever:
         self._load_env_variables()
         self.vstore = None
         self.retriever_instance = None
+        
+    def _load_env_variables(self):
+        """_summary_
+        """
+        load_dotenv()
+         
+        required_vars = ["GOOGLE_API_KEY", "ASTRA_DB_API_ENDPOINT", "ASTRA_DB_APPLICATION_TOKEN", "ASTRA_DB_KEYSPACE"]
+        
+        missing_vars = [var for var in required_vars if os.getenv(var) is None]
+        
+        if missing_vars:
+            raise EnvironmentError(f"Missing environment variables: {missing_vars}")
+
+        self.google_api_key = os.getenv("GOOGLE_API_KEY")
+        self.db_api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
+        self.db_application_token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
+        self.db_keyspace = os.getenv("ASTRA_DB_KEYSPACE")
