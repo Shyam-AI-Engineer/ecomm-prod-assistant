@@ -30,3 +30,23 @@ class CustomLogger:
             format="%(message)s",  # Structlog will handle JSON rendering
             handlers=[console_handler, file_handler]
         )
+        
+        # Configure structlog for JSON structured logging
+        structlog.configure(
+            processors=[
+                structlog.processors.TimeStamper(fmt="iso", utc=True, key="timestamp"),
+                structlog.processors.add_log_level,
+                structlog.processors.EventRenamer(to="event"),
+                structlog.processors.JSONRenderer()
+            ],
+            logger_factory=structlog.stdlib.LoggerFactory(),
+            cache_logger_on_first_use=True,
+        )
+
+        return structlog.get_logger(logger_name)
+    
+# # --- Usage Example ---
+# if __name__ == "__main__":
+#     logger = CustomLogger().get_logger(__file__)
+#     logger.info("User uploaded a file", user_id=123, filename="report.pdf")
+#     logger.error("Failed to process PDF", error="File not found", user_id=123)
