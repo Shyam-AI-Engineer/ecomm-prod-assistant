@@ -37,3 +37,39 @@ class Retriever:
         self.db_api_endpoint = os.getenv("ASTRA_DB_API_ENDPOINT")
         self.db_application_token = os.getenv("ASTRA_DB_APPLICATION_TOKEN")
         self.db_keyspace = os.getenv("ASTRA_DB_KEYSPACE")
+        
+    def load_retriever(self):
+        """_summary_
+        """
+        if not self.vstore:
+            collection_name = self.config["astra_db"]["collection_name"]
+            
+            self.vstore =AstraDBVectorStore(
+                embedding= self.model_loader.load_embeddings(),
+                collection_name=collection_name,
+                api_endpoint=self.db_api_endpoint,
+                token=self.db_application_token,
+                namespace=self.db_keyspace,
+                )
+        if not self.retriever_instance:
+            top_k = self.config["retriever"]["top_k"] if "retriever" in self.config else 3
+            
+            mmr_retriever=self.vstore.as_retriever(
+                search_type="mmr",
+                search_kwargs={"k": top_k,
+                                "fetch_k": 20,
+                                "lambda_mult": 0.7,
+                                "score_threshold": 0.6
+                               })
+            print("Retriever loaded successfully.")
+            
+            llm = self.model_loader.load_llm()
+            
+            compressor=LLMChainFilter.from_llm(llm)
+            
+            self.retriever_instance = ContextualCompressionRetriever(
+                base_compressor=compressor, 
+                base_retriever=mmr_retriever
+            )
+            
+        return self.retriever_instance
