@@ -73,3 +73,17 @@ class Retriever:
             )
             
         return self.retriever_instance
+    
+    def call_retriever(self,query):
+        """_summary_
+        """
+        retriever=self.load_retriever()
+        output=retriever.invoke(query)
+        return output
+    
+if __name__=='__main__':
+    user_query = "Can you suggest good budget iPhone under 1,00,00 INR?"
+    
+    retriever_obj = Retriever()
+    
+    retrieved_docs = retriever_obj.call_retriever(user_query)
