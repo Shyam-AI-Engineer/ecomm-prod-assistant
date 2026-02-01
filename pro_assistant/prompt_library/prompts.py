@@ -13,3 +13,5 @@ class PromptTemplate:
         self.template = template.strip()
         self.description = description
         self.version = version
+        
+    
