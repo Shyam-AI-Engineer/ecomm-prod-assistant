@@ -49,3 +49,18 @@ def build_chain(query):
         | StrOutputParser()
     )
     return chain,retrieved_contexts
+
+def invoke_chain(query: str, debug: bool = False):
+    """Run the chain with a user query."""
+    chain,retrieved_contexts = build_chain(query)
+
+    if debug:
+        # For debugging: show docs retrieved before passing to LLM
+        docs = retriever_obj.load_retriever().invoke(query)
+        print("\nRetrieved Documents:")
+        print(format_docs(docs))
+        print("\n---\n")
+
+    response = chain.invoke(query)
+    
+    return retrieved_contexts,response
