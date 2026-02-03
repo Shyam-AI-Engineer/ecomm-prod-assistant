@@ -27,3 +27,25 @@ def format_docs(docs) -> str:
         formatted_chunks.append(formatted)
 
     return "\n\n---\n\n".join(formatted_chunks)
+
+def build_chain(query):
+    """Build the RAG pipeline chain with retriever, prompt, LLM, and parser."""
+    retriever = retriever_obj.load_retriever()
+    retrieved_docs=retriever.invoke(query)
+    
+    #retrieved_contexts = [format_docs(doc) for doc in retrieved_docs]
+    
+    retrieved_contexts = [format_docs(retrieved_docs)]
+    
+    llm = model_loader.load_llm()
+    prompt = ChatPromptTemplate.from_template(
+        PROMPT_REGISTRY[PromptType.PRODUCT_BOT].template
+    )
+
+    chain = (
+        {"context": retriever | format_docs, "question": RunnablePassthrough()}
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    return chain,retrieved_contexts
