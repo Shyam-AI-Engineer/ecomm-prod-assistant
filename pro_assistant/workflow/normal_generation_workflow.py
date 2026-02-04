@@ -94,3 +94,20 @@ if __name__=='__main__':
     
     #this is not an actual output this have been written to test the pipeline
     #response="iphone 16 plus, iphone 16, iphone 15 are best phones under 1,00,000 INR."
+    
+    context_score = evaluate_context_precision(user_query,response,retrieved_contexts)
+    relevancy_score = evaluate_response_relevancy(user_query,response,retrieved_contexts)
+    
+    print("\n--- Evaluation Metrics ---")
+    print("Context Precision Score:", context_score)
+    print("Response Relevancy Score:", relevancy_score)
+    
+    
+# if __name__ == "__main__":
+#     try:
+#         answer = invoke_chain("can you tell me the price of the iPhone 15?")
+#         print("\n Assistant Answer:\n", answer)
+#     except Exception as e:
+#         import traceback
+#         print("Exception occurred:", str(e))
+#         traceback.print_exc()
