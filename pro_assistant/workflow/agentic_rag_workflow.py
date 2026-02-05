@@ -92,6 +92,12 @@ class AgenticRAG:
         response = chain.invoke({"context": docs, "question": question})
         return {"messages": [HumanMessage(content=response)]}
     
-    
+    def _rewrite(self, state: AgentState):
+        print("--- REWRITE ---")
+        question = state["messages"][0].content
+        new_q = self.llm.invoke(
+            [HumanMessage(content=f"Rewrite the query to be clearer: {question}")]
+        )
+        return {"messages": [HumanMessage(content=new_q.content)]}
     
     
