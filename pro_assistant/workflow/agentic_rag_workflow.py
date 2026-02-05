@@ -81,4 +81,17 @@ class AgenticRAG:
         score = chain.invoke({"question": question, "docs": docs})
         return "generator" if "yes" in score.lower() else "rewriter"
     
+    def _generate(self, state: AgentState):
+        print("--- GENERATE ---")
+        question = state["messages"][0].content
+        docs = state["messages"][-1].content
+        prompt = ChatPromptTemplate.from_template(
+            PROMPT_REGISTRY[PromptType.PRODUCT_BOT].template
+        )
+        chain = prompt | self.llm | StrOutputParser()
+        response = chain.invoke({"context": docs, "question": question})
+        return {"messages": [HumanMessage(content=response)]}
+    
+    
+    
     
