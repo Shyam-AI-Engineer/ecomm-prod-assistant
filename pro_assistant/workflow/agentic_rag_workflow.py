@@ -66,3 +66,19 @@ class AgenticRAG:
         docs = retriever.invoke(query)
         context = self._format_docs(docs)
         return {"messages": [HumanMessage(content=context)]}
+    
+    def _grade_documents(self, state: AgentState) -> Literal["generator", "rewriter"]:
+        print("--- GRADER ---")
+        question = state["messages"][0].content
+        docs = state["messages"][-1].content
+
+        prompt = PromptTemplate(
+            template="""You are a grader. Question: {question}\nDocs: {docs}\n
+            Are docs relevant to the question? Answer yes or no.""",
+            input_variables=["question", "docs"],
+        )
+        chain = prompt | self.llm | StrOutputParser()
+        score = chain.invoke({"question": question, "docs": docs})
+        return "generator" if "yes" in score.lower() else "rewriter"
+    
+    
