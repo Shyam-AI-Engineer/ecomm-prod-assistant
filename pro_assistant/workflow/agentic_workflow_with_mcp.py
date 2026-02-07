@@ -12,3 +12,30 @@ from langgraph.checkpoint.memory import MemorySaver
 import asyncio
 from evaluation.ragas_eval import evaluate_context_precision, evaluate_response_relevancy
 from langchain_mcp_adapters.client import MultiServerMCPClient
+
+class AgenticRAG:
+    """Agentic RAG pipeline using LangGraph."""
+
+    class AgentState(TypedDict):
+        messages: Annotated[Sequence[BaseMessage], add_messages]
+        
+    def __init__(self):
+        self.retriever_obj = Retriever()
+        self.model_loader = ModelLoader()
+        self.llm = self.model_loader.load_llm()
+        self.checkpointer = MemorySaver()
+        
+        # MCP Client Init
+        self.mcp_client = MultiServerMCPClient({
+            "product_retriever": {
+                "command": "python",
+                "args": ["prod_assistant/mcp_servers/product_search_server.py"],  # absolute path recommended
+                "transport": "stdio"
+            }
+        })
+        # Load MCP tools (async ko sync wrapper me call karna hoga)
+        self.mcp_tools = asyncio.run(self.mcp_client.get_tools())
+
+        
+        self.workflow = self._build_workflow()
+        self.app = self.workflow.compile(checkpointer=self.checkpointer)
