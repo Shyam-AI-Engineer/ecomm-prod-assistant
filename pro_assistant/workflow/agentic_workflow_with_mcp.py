@@ -39,3 +39,19 @@ class AgenticRAG:
         
         self.workflow = self._build_workflow()
         self.app = self.workflow.compile(checkpointer=self.checkpointer)
+        
+    # ---------- Helpers ----------
+    def _format_docs(self, docs) -> str:
+        if not docs:
+            return "No relevant documents found."
+        formatted_chunks = []
+        for d in docs:
+            meta = d.metadata or {}
+            formatted = (
+                f"Title: {meta.get('product_title', 'N/A')}\n"
+                f"Price: {meta.get('price', 'N/A')}\n"
+                f"Rating: {meta.get('rating', 'N/A')}\n"
+                f"Reviews:\n{d.page_content.strip()}"
+            )
+            formatted_chunks.append(formatted)
+        return "\n\n---\n\n".join(formatted_chunks)
