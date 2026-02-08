@@ -55,3 +55,19 @@ class AgenticRAG:
             )
             formatted_chunks.append(formatted)
         return "\n\n---\n\n".join(formatted_chunks)
+    
+    # ---------- Nodes ----------
+    def _ai_assistant(self, state: AgentState):
+        print("--- CALL ASSISTANT ---")
+        messages = state["messages"]
+        last_message = messages[-1].content
+
+        if any(word in last_message.lower() for word in ["price", "review", "product"]):
+            return {"messages": [HumanMessage(content="TOOL: retriever")]}
+        else:
+            prompt = ChatPromptTemplate.from_template(
+                "You are a helpful assistant. Answer the user directly.\n\nQuestion: {question}\nAnswer:"
+            )
+            chain = prompt | self.llm | StrOutputParser()
+            response = chain.invoke({"question": last_message})
+            return {"messages": [HumanMessage(content=response)]}
