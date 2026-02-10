@@ -103,8 +103,7 @@ if __name__=='__main__':
             formatted_chunks.append(formatted)
         return "\n\n---\n\n".join(formatted_chunks)
     
-     retrieved_contexts = [_format_docs(doc) for doc in retrieved_docs]
-     
+    retrieved_contexts = [_format_docs(doc) for doc in retrieved_docs]
     #this is not an actual output this have been written to test the pipeline
     response="iphone 16 plus, iphone 16, iphone 15 are best phones under 1,00,000 INR."
     
