@@ -11,3 +11,20 @@ async def main():
             "transport": "stdio",
         }
     })
+    
+    # Discover tools
+    tools = await client.get_tools()
+    print("Available tools:", [t.name for t in tools])
+
+    # Pick tools by name
+    retriever_tool = next(t for t in tools if t.name == "get_product_info")
+    web_tool = next(t for t in tools if t.name == "web_search")
+
+    # --- Step 1: Try retriever first ---
+    #query = "Samsung Galaxy S25 price"
+    # query = "iPhone 15"
+    query = "iPhone 17?"
+    retriever_result = await retriever_tool.ainvoke({"query": query})
+    print("\nRetriever Result:\n", retriever_result)
+    
+    
