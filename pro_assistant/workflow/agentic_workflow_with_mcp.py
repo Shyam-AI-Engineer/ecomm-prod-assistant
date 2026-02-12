@@ -33,7 +33,7 @@ class AgenticRAG:
                 "transport": "stdio"
             }
         })
-        # Load MCP tools (async ko sync wrapper me call karna hoga)
+        # Load MCP tools (async method sync as wrapper to call)
         self.mcp_tools = asyncio.run(self.mcp_client.get_tools())
 
         
